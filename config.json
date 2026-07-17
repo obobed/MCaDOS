@@ -2,7 +2,7 @@
   "trigger_key": "shift_r",
   "bindings": [
     {
-      "pattern": "H",
+      "pattern": "T",
       "action": "m_play_pause"
     },
     {
