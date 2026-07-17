@@ -12,18 +12,19 @@ class PatternDetector:
         self.last_event_time = None
         
     def press(self):
-        self.press_time = time.monotonic()
+        if self.press_time is None: # otherwise os auto-repeats will keep triggering presses during a hold event
+            self.press_time = time.monotonic()
 
     def release(self):
         if self.press_time is None:
             return # maybe some debug logging here?
         duration = time.monotonic() - self.press_time
-        self.sequence += "H" if duration > TAP_MAX else "T" # h & t are hold and tap respectively if you're slow like me :sob:
+        self.sequence += "H" if duration > TAP_MAX else "T" # h & t are hold and tap respectively
         self.last_event_time = time.monotonic()
         self.press_time = None
     
     def check_timeout(self): # call every like 50ms from a loop or timer, basically checks if the sequence has timed out
-        if self.sequence and self.last_event_time:
+        if self.sequence and self.last_event_time and not self.press_time:
             if time.monotonic() - self.last_event_time > GAP_MAX:
                 self.on_pattern(self.sequence)
                 self.sequence = ""
