@@ -2,6 +2,8 @@ from main import PatternDetector
 from pynput import keyboard
 import time
 
+from actions import peek_desktop, m_play_pause, m_next, m_prev, paste_text
+
 TRIGGER = keyboard.Key.shift_r
 
 def on_pattern(pattern):
@@ -22,27 +24,13 @@ def on_release(key):
     if key == TRIGGER:
         p.release()
 
-def peek_desktop():
-    print("peek desktop")
-
-def m_play_pause():
-    print("play/pause")
-
-def m_next():
-    print("next song")
-
-def m_prev():
-    print("prev song")
-
-def paste_text():
-    print("paste text")
 
 PATTERN_MAP = {
     "H": m_play_pause,
     "HT": m_next,
     "HTT": m_prev,
-    "TTT": peek_desktop,
-    "TH": paste_text
+    "TT": peek_desktop,
+    "HT": paste_text
 }
 
 listener = keyboard.Listener(on_press, on_release)
