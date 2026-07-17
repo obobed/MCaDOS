@@ -2,7 +2,7 @@ import time
 
 # we need vars for thresholds
 TAP_MAX = 0.35 # press and release combo before this time = a tap
-GAP_MAX = 0.35 # silence longer than this = a gap
+TIMEOUT = 0.35 # silence longer than this = timeout and sequence is finished
 
 class PatternDetector:
     def __init__(self, on_pattern) -> None: # on_pattern being the handler function
@@ -25,7 +25,7 @@ class PatternDetector:
     
     def check_timeout(self): # call every like 50ms from a loop or timer, basically checks if the sequence has timed out
         if self.sequence and self.last_event_time and not self.press_time:
-            if time.monotonic() - self.last_event_time > GAP_MAX:
+            if time.monotonic() - self.last_event_time > TIMEOUT:
                 self.on_pattern(self.sequence)
                 self.sequence = ""
                 self.last_event_time = None
