@@ -1,12 +1,12 @@
-from main import PatternDetector
+from main import PatternDetector, validate_config
 from pynput import keyboard
-import time
-import json
+import time, json
 
 from actions import ACTIONS
 
-with open("config.jsonc") as f:
+with open("config.json") as f:
     config = json.load(f)
+validate_config(config)
 
 TRIGGER = getattr(keyboard.Key, config["trigger_key"])
 
