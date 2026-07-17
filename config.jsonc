@@ -1,0 +1,34 @@
+{
+  "trigger_key": "shift_r",
+  "bindings": [
+    {
+      "pattern": "H",
+      "action": "m_play_pause"
+    },
+    {
+      "pattern": "HT",
+      "action": "m_next"
+    },
+    {
+      "pattern": "HTT",
+      "action": "m_prev"
+    },
+    {
+      "pattern": "TT",
+      "action": "peek_desktop"
+    },
+    {
+      "pattern": "TH",
+      "action": "paste_text",
+      "args": { "text": "macondo is peak yall should do it\n" }
+    },
+    {
+      "pattern": "THT",
+      "action": "paste_text",
+      "args": { "text": "onekey is peak yall should do it\n" }
+    }
+  ]
+}
+// macondo is peak yall should do itonekey is peak yall should do it
+// macondo is peak yall should do itonekey is peak yall should do it
+// oh noes im gonna get fraud flagged here for autotyping, it was this above ^^ testing the paster :sob:

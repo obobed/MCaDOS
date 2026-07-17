@@ -1,15 +1,24 @@
 from main import PatternDetector
 from pynput import keyboard
 import time
+import json
 
-from actions import peek_desktop, m_play_pause, m_next, m_prev, paste_text
+from actions import ACTIONS
 
-TRIGGER = keyboard.Key.shift_r
+with open("config.jsonc") as f:
+    config = json.load(f)
+
+TRIGGER = getattr(keyboard.Key, config["trigger_key"])
+
+PATTERN_MAP = {}
+for binding in config["bindings"]:
+    PATTERN_MAP[binding["pattern"]] = (ACTIONS[binding["action"]], binding.get("args", {}))
 
 def on_pattern(pattern):
-    action = PATTERN_MAP.get(pattern)
-    if action:
-        action()
+    entry = PATTERN_MAP.get(pattern)
+    if entry:
+        action, kwargs = entry
+        action(**kwargs)
         print(pattern)
     else:
         print(f"unmapped pattern: {pattern}")
@@ -24,14 +33,6 @@ def on_release(key):
     if key == TRIGGER:
         p.release()
 
-
-PATTERN_MAP = {
-    "H": m_play_pause,
-    "HT": m_next,
-    "HTT": m_prev,
-    "TT": peek_desktop,
-    "HT": paste_text
-}
 
 listener = keyboard.Listener(on_press, on_release)
 listener.start()
