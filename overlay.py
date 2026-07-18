@@ -16,6 +16,7 @@ class Overlay(QWidget):
             Qt.WindowType.FramelessWindowHint |
             Qt.WindowType.WindowStaysOnTopHint |
             Qt.WindowType.FramelessWindowHint |
+            Qt.WindowType.WindowDoesNotAcceptFocus |
             Qt.WindowType.Tool
         )
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
@@ -40,4 +41,3 @@ class Overlay(QWidget):
         self.move(pos.x() + 16, pos.y() + 16)
         self.show()
         self.raise_()
-        self.activateWindow()
