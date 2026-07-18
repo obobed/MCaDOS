@@ -5,8 +5,9 @@ from json.decoder import JSONDecodeError
 
 from overlay import Bridge, Overlay
 from pynput import keyboard
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QSystemTrayIcon, QMenu
 from PySide6.QtCore import QTimer
+from PySide6.QtGui import QIcon, QAction
 
 from logging_setup import setup_logging
 import logging
@@ -18,6 +19,19 @@ logger = logging.getLogger(__name__)
 
 app = QApplication(sys.argv)
 signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+tray = QSystemTrayIcon()
+tray.setIcon(QIcon("icon.ico"))
+tray.setToolTip("MCaDOS")
+
+menu = QMenu()
+
+quit_action = QAction("quit")
+quit_action.triggered.connect(app.quit)
+menu.addAction(quit_action)
+
+tray.setContextMenu(menu)
+tray.show()
 
 overlay = Overlay()
 bridge = Bridge()
