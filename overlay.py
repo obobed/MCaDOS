@@ -2,6 +2,10 @@ from PySide6.QtCore import Qt, QObject, Signal
 from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout
 from PySide6.QtGui import QCursor
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 class Bridge(QObject):
     sequence_changed = Signal(str)
 
@@ -25,12 +29,12 @@ class Overlay(QWidget):
         self.hide()
 
     def update_text(self, text):
-        print(f"update text {text!r}")
+        logger.debug(f"overlay update_text: {text!r}")
         if not text:
             self.hide()
             return
         self.label.setText(text)
-        self.resize(self.label.sizeHint())
+        self.resize(self.label.sizeHint()) # my attempts at keeping this always ontop on windows are futile :pensive:
         self.adjustSize()
         pos = QCursor.pos()
         self.move(pos.x() + 16, pos.y() + 16)

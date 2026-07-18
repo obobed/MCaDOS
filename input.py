@@ -1,13 +1,20 @@
 from main import PatternDetector, validate_config
 from pynput import keyboard
 import signal, json, os, sys
+from json.decoder import JSONDecodeError
 
 from overlay import Bridge, Overlay
 from pynput import keyboard
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QTimer
 
+from logging_setup import setup_logging
+import logging
+
 from actions import ACTIONS
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 app = QApplication(sys.argv)
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -33,24 +40,30 @@ def reload_if_changed(path="config.json"):
         return
     last_mtime = mtime
 
-    with open(path) as f:
-        new_config = json.load(f)
+    try:
+        with open(path) as f:
+            new_config = json.load(f)
+    except JSONDecodeError as e:
+        logger.error(f"config reload failed, invalid json: {e}")
+        return
 
     try:
         validate_config(new_config)
     except ValueError as e:
-        print(f"config reload failed with errors, retaining old config:\n{e}")
+        logger.error(f"config reload failed with errors, retaining old config:\n{e}")
         return
     config = new_config
     PATTERN_MAP = build_pattern_map(config)
-    print("config reloaded successfully")
+    logging.info("config reloaded successfully")
 
 
 
 def build_pattern_map(config):
     pattern_map = {}
-    for binding in config["bindings"]:
-        pattern_map[binding["pattern"]] = (ACTIONS[binding["action"]], binding.get("args", {}))
+    for binding in config["bindings"]: # hopefully this is easier to read
+        action = ACTIONS[binding["action"]]
+        label = binding.get("label", binding["action"])
+        pattern_map[binding["pattern"]] = (action, binding.get("args", {}), label)
     return pattern_map
 
 TRIGGER = getattr(keyboard.Key, config["trigger_key"])
@@ -60,15 +73,15 @@ OVERLAY_TIMEOUT = 1000 # ms
 def on_pattern(pattern):
     entry = PATTERN_MAP.get(pattern)
     if entry:
-        action, kwargs = entry
+        action, kwargs,label = entry
         action(**kwargs)
-        bridge.sequence_changed.emit(action.__name__)
+        bridge.sequence_changed.emit(label)
         overlay_clear_timer.start(OVERLAY_TIMEOUT)
-        print(pattern)
+        logger.info(f"pattern matched: {pattern} to {label}")
     else:
         bridge.sequence_changed.emit(f"unmapped: {pattern}")
         overlay_clear_timer.start(OVERLAY_TIMEOUT)
-        print(f"unmapped pattern: {pattern}")
+        logging.warning(f"unmapped pattern: {pattern}")
 
 p = PatternDetector(on_pattern=on_pattern, on_update=bridge.sequence_changed.emit)
 

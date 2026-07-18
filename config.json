@@ -3,29 +3,35 @@
   "bindings": [
     {
       "pattern": "T",
-      "action": "m_play_pause"
+      "action": "m_play_pause",
+      "label": "Play/Pause"
     },
     {
       "pattern": "HT",
-      "action": "m_next"
+      "action": "m_next",
+      "label": "Next"
     },
     {
       "pattern": "HTT",
-      "action": "m_prev"
+      "action": "m_prev",
+      "label": "Previous"
     },
     {
       "pattern": "TT",
-      "action": "peek_desktop"
+      "action": "peek_desktop",
+      "label": "Desktop Peek"
     },
     {
       "pattern": "TH",
       "action": "paste_text",
-      "args": { "text": "macondo is peak yall should do it\n" }
+      "args": { "text": "macondo is peak yall should do it\n" },
+      "label": "Macondo Paste"
     },
     {
       "pattern": "THT",
       "action": "paste_text",
-      "args": { "text": "onekey is peak yall should do it\n" }
+      "args": { "text": "onekey is peak yall should do it\n" },
+      "label": "Onekey Paste"
     }
   ]
 }
