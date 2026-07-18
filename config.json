@@ -35,7 +35,7 @@
     {
       "pattern": "THT",
       "action": "paste_text",
-      "args": { "text": "onekey is peak yall should do it\n" },
+      "args": { "text": "onekey is peaker yall should do it\n" },
       "label": "Onekey Paste"
     },
     {
