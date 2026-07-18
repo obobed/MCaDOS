@@ -142,6 +142,6 @@ timer = QTimer()
 timer.timeout.connect(lambda: (p.check_timeout(), reload_if_changed()))
 timer.start(50)
 
-get_start_apps(True)
 logger.info("started")
+QTimer.singleShot(0, lambda: get_start_apps(force_refresh=True))
 sys.exit(app.exec())
