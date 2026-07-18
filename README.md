@@ -47,7 +47,7 @@ T is a tap, H is a hold
 |TT     |Peek at Desktop     |
 |THT    |Paste onekey text :3|
 |TH     |Paste macondo text  |
-|TTT    |Open Slack          |
+|TTT    |Open Slack (you can change the app name in the config to open any app you want!)          |
 
 
 ## Adding an action
