@@ -36,6 +36,20 @@ All action configuration is done in `config.json`, which also hot-reloads!
 * `args` optional, if the function in actions.py takes in kwargs, you can put them here!
 * `label` optional, shows in logs and the overlay, if missing it defaults to the action name 
 
+## Default Bindings
+T is a tap, H is a hold
+|Pattern|Binding             |
+|-------|--------------------|
+|T      |Play/Pause Media    |
+|HT     |Media Next          |
+|HTT    |Media Previous      |
+|TTH    |Volume Mute         |
+|TT     |Peek at Desktop     |
+|THT    |Paste onekey text :3|
+|TH     |Paste macondo text  |
+|TTT    |Open Slack          |
+
+
 ## Adding an action
 1. Write a function in action.py (if you have parameters, they become your `args` in `config.json`)
 2. Add it in the ACTIONS dict at the bottom of actions.py
