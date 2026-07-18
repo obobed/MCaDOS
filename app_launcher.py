@@ -1,37 +1,40 @@
 import os
 import glob
+import json
 import logging
 import win32com.client
 import subprocess
 
 logger = logging.getLogger(__name__)
 
-START_MENU_DIRS = [
-    os.path.join(os.environ["APPDATA"], r"Microsoft\Windows\Start Menu\Programs"),
-    os.path.join(os.environ["PROGRAMDATA"], r"Microsoft\Windows\Start Menu\Programs"),
-]
+def get_start_apps():
+    result = subprocess.run(
+        ["powershell", "-NoProfile", "-Command", "Get-StartApps | ConvertTo-Json"], # reference: powershell -NoProfile -Command "Get-StartApps | Where-Object { $_.Name -like '*Slack*' } | ConvertTo-Json"
+        capture_output=True, text=True, timeout=10
+    )
+    logger.debug(f"returncode: {result.returncode}")
+    logger.debug(f"stdout: {result.stdout!r}")
+    logger.debug(f"stderr: {result.stderr!r}")
+    data = json.loads(result.stdout)
+    if isinstance(data, dict): # when only one match, pwsh returns a bare obj instead of a list
+        data = [data]
+    return data
 
-def resolve_shortcut(lnk_path):
-    shell = win32com.client.Dispatch("WScript.Shell")
-    shortcut = shell.CreateShortCut(lnk_path)
-    return shortcut.Targetpath
-
-def find_shortcut(app_name):
+def find_app_id(app_name=""):
     lower = app_name.lower()
-    for dir in START_MENU_DIRS:
-        pattern = os.path.join(dir, "**", "*.lnk")
-        for path in glob.glob(pattern, recursive=True):
-            if lower in os.path.basename(path).lower():
-                return path
+    for app in get_start_apps():
+        if lower in app["Name"].lower():
+            return app["AppID"]
+        
     return None
 
 def open_app(app_name=""):
-    shortcut = find_shortcut(app_name)
-    if not shortcut:
-        logger.warning(f"couldn't find app shortcut {app_name}")
+    app_id = find_app_id(app_name)
+    if not app_id:
+        logger.warning(f"couldn't find app {app_name}")
         return
     try:
-        subprocess.Popen(["explorer.exe", shortcut])
-        logger.info(f"opened {app_name} with explorer: {shortcut}")
+        subprocess.Popen(["explorer.exe", f"shell:AppsFolder\\{app_id}"])
+        logger.info(f"opened {app_name} with appid: {app_id}")
     except OSError as e:
         logger.error(f"failed to launch {app_name}: {e}")
