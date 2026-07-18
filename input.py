@@ -20,8 +20,21 @@ logger = logging.getLogger(__name__)
 app = QApplication(sys.argv)
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
+def get_base_dir():
+    if getattr(sys, "frozen", False):
+        return os.path.dirname(sys.executable)
+    return os.path.dirname(os.path.abspath(__file__))
+
+def resource_path(filename):
+    if getattr(sys, "frozen", False):
+        base = sys._MEIPASS # dis will have an attribute error in your ide but its safe to ignore, MEIPASS exists in pyinstaller only and not in ur local env
+
+    else:
+        base = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(base, filename)
+
 tray = QSystemTrayIcon()
-tray.setIcon(QIcon("icon.ico"))
+tray.setIcon(QIcon(resource_path("icon.ico")))
 tray.setToolTip("MCaDOS")
 
 menu = QMenu()
@@ -41,13 +54,19 @@ overlay_clear_timer = QTimer()
 overlay_clear_timer.setSingleShot(True)
 overlay_clear_timer.timeout.connect(lambda: bridge.sequence_changed.emit(""))
 
-last_mtime = os.path.getmtime("config.json") # last time the config was modified
+CONFIG_PATH = os.path.join(get_base_dir(), "config.json")
 
-with open("config.json") as f:
+if not os.path.exists(CONFIG_PATH):
+    logger.critical("no config.json found")
+    exit()
+
+last_mtime = os.path.getmtime(CONFIG_PATH) # last time the config was modified
+
+with open(CONFIG_PATH) as f:
     config = json.load(f)
 validate_config(config)
 
-def reload_if_changed(path="config.json"):
+def reload_if_changed(path=CONFIG_PATH):
     global last_mtime, config, PATTERN_MAP
     mtime = os.path.getmtime(path)
     if mtime == last_mtime:

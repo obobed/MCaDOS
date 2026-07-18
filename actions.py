@@ -29,10 +29,15 @@ def paste_text(text="{BAD_CONFIG}"):
     with keeb.pressed(Key.ctrl):
         keeb.tap('v')
 
+def m_mute():
+    logger.debug("m_mute")
+    keeb.tap(Key.media_volume_mute)
+
 ACTIONS = {
     "peek_desktop": peek_desktop,
     "m_play_pause": m_play_pause,
     "m_next": m_next,
     "m_prev": m_prev,
+    "m_mute": m_mute,
     "paste_text": paste_text
 }

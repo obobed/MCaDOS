@@ -22,6 +22,11 @@
       "label": "Desktop Peek"
     },
     {
+      "pattern": "TTH",
+      "action": "m_mute",
+      "label": "Volume Mute"
+    },
+    {
       "pattern": "TH",
       "action": "paste_text",
       "args": { "text": "macondo is peak yall should do it\n" },
