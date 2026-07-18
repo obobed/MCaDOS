@@ -30,14 +30,8 @@ def open_app(app_name=""):
     if not shortcut:
         logger.warning(f"couldn't find app shortcut {app_name}")
         return
-    target = resolve_shortcut(shortcut)
-    if not target:
-        logger.warning(f"shortcut found but couldn't resolve target")
-        return
     try:
-        logger.debug(f"shortcut: {shortcut}, target: {target}")
-        subprocess.Popen([target])
-        logger.info(f"opened {app_name} with {target}")
-        logger.debug(f"shortcut: {shortcut}")
+        subprocess.Popen(["explorer.exe", shortcut])
+        logger.info(f"opened {app_name} with explorer: {shortcut}")
     except OSError as e:
         logger.error(f"failed to launch {app_name}: {e}")
