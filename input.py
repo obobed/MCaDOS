@@ -27,7 +27,7 @@ def get_base_dir():
 
 def resource_path(filename):
     if getattr(sys, "frozen", False):
-        base = sys._MEIPASS # dis will have an attribute error in your ide but its safe to ignore, MEIPASS exists in pyinstaller only and not in ur local env
+        base = sys._MEIPASS # type: ignore # dis will have an attribute error in your ide but its safe to ignore, MEIPASS exists in pyinstaller only and not in ur local env
 
     else:
         base = os.path.dirname(os.path.abspath(__file__))
@@ -107,7 +107,13 @@ def on_pattern(pattern):
     entry = PATTERN_MAP.get(pattern)
     if entry:
         action, kwargs,label = entry
-        action(**kwargs)
+        try:
+            action(**kwargs)
+        except Exception:
+            logger.exception(f"action failed for pattern {pattern} ({label})")
+            bridge.sequence_changed.emit(f"error: {label}")
+            overlay_clear_timer.start(OVERLAY_TIMEOUT)
+            return
         bridge.sequence_changed.emit(label)
         overlay_clear_timer.start(OVERLAY_TIMEOUT)
         logger.info(f"pattern matched: {pattern} to {label}")

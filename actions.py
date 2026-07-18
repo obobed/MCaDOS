@@ -1,6 +1,7 @@
 from pynput.keyboard import Controller, Key
 import pyperclip
 import logging
+from app_launcher import open_app
 
 logger = logging.getLogger(__name__)
 
@@ -39,5 +40,6 @@ ACTIONS = {
     "m_next": m_next,
     "m_prev": m_prev,
     "m_mute": m_mute,
-    "paste_text": paste_text
+    "paste_text": paste_text,
+    "open_app": open_app
 }

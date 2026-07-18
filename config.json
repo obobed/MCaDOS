@@ -37,6 +37,12 @@
       "action": "paste_text",
       "args": { "text": "onekey is peak yall should do it\n" },
       "label": "Onekey Paste"
+    },
+    {
+      "pattern": "TTT",
+      "action": "open_app",
+      "args": { "app_name": "slack" },
+      "label": "Open Slack"
     }
   ]
 }
