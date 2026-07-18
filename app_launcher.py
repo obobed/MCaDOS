@@ -7,7 +7,14 @@ import subprocess
 
 logger = logging.getLogger(__name__)
 
-def get_start_apps():
+app_cache = None
+
+def get_start_apps(force_refresh=False):
+    global app_cache
+
+    if app_cache is not None and not force_refresh:
+        return app_cache
+    
     result = subprocess.run(
         ["powershell", "-NoProfile", "-Command", "Get-StartApps | ConvertTo-Json"], # reference: powershell -NoProfile -Command "Get-StartApps | Where-Object { $_.Name -like '*Slack*' } | ConvertTo-Json"
         capture_output=True, text=True, timeout=10
@@ -18,7 +25,9 @@ def get_start_apps():
     data = json.loads(result.stdout)
     if isinstance(data, dict): # when only one match, pwsh returns a bare obj instead of a list
         data = [data]
-    return data
+    
+    app_cache = data
+    return app_cache
 
 def find_app_id(app_name=""):
     lower = app_name.lower()

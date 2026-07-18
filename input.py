@@ -14,6 +14,8 @@ import logging
 
 from actions import ACTIONS
 
+from app_launcher import get_start_apps
+
 setup_logging()
 logger = logging.getLogger(__name__)
 
@@ -140,4 +142,6 @@ timer = QTimer()
 timer.timeout.connect(lambda: (p.check_timeout(), reload_if_changed()))
 timer.start(50)
 
+get_start_apps(True)
+logger.info("started")
 sys.exit(app.exec())
