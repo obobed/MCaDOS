@@ -10,7 +10,7 @@ def setup_logging():
     full_log_path = os.path.join(LOG_PATH, log_filename)
 
     logging.basicConfig(
-        level=logging.INFO,
+        level=logging.DEBUG,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
         datefmt="%H:%M:%S",
         handlers=[

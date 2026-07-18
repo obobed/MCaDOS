@@ -1,6 +1,8 @@
 import os
 import glob
 import logging
+import win32com.client
+import subprocess
 
 logger = logging.getLogger(__name__)
 
@@ -8,6 +10,11 @@ START_MENU_DIRS = [
     os.path.join(os.environ["APPDATA"], r"Microsoft\Windows\Start Menu\Programs"),
     os.path.join(os.environ["PROGRAMDATA"], r"Microsoft\Windows\Start Menu\Programs"),
 ]
+
+def resolve_shortcut(lnk_path):
+    shell = win32com.client.Dispatch("WScript.Shell")
+    shortcut = shell.CreateShortCut(lnk_path)
+    return shortcut.Targetpath
 
 def find_shortcut(app_name):
     lower = app_name.lower()
@@ -20,8 +27,17 @@ def find_shortcut(app_name):
 
 def open_app(app_name=""):
     shortcut = find_shortcut(app_name)
-    if shortcut:
-        os.startfile(shortcut)
-        logger.info(f"launced {app_name} with {shortcut}")
-    else:
+    if not shortcut:
         logger.warning(f"couldn't find app shortcut {app_name}")
+        return
+    target = resolve_shortcut(shortcut)
+    if not target:
+        logger.warning(f"shortcut found but couldn't resolve target")
+        return
+    try:
+        logger.debug(f"shortcut: {shortcut}, target: {target}")
+        subprocess.Popen([target])
+        logger.info(f"opened {app_name} with {target}")
+        logger.debug(f"shortcut: {shortcut}")
+    except OSError as e:
+        logger.error(f"failed to launch {app_name}: {e}")
